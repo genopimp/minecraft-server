@@ -8,37 +8,36 @@
   <Shell>bash</Shell>
   <Privileged>false</Privileged>
   <Support>https://github.com/genopimp/minecraft-server</Support>
-  <Project>https://www.minecraft.net/</Project>
-  <Overview>Vanilla Minecraft Java dedicated server. On every start it asks Mojang for latest.release (the same channel as the Windows Java launcher) and downloads that official server.jar, SHA-1 verified. Restart the container after a client update (or daily) to stay in lockstep. Java Edition only (port 25565) — not Bedrock / Minecraft for Windows Store.</Overview>
+  <Project>https://www.minecraft.net/en-us/download/server/bedrock</Project>
+  <Overview>Vanilla Minecraft Bedrock Dedicated Server. On every start it asks Mojang for the current Linux BDS zip — the same release as Minecraft for Windows (Microsoft Store / Xbox app) — and installs that official binary. Restart after a client update (or daily) to stay in lockstep. Bedrock only (UDP 19132), not Java Edition.</Overview>
   <Category>GameServers:</Category>
   <WebUI/>
   <TemplateURL>https://raw.githubusercontent.com/genopimp/minecraft-server/main/unraid/minecraft-server.xml</TemplateURL>
   <Icon>https://minecraft.wiki/images/Grass_Block_JE7_BE6.png</Icon>
-  <ExtraParams>--memory=6g</ExtraParams>
+  <ExtraParams>--memory=4g</ExtraParams>
   <PostArgs/>
   <CPUset/>
-  <StopGracePeriod>60</StopGracePeriod>
   <DateInstalled/>
   <DonateText/>
   <DonateLink/>
   <Requires/>
-  <Config Name="World Data" Target="/data" Default="/mnt/user/appdata/minecraft-server" Mode="rw" Description="World, config, logs, and cached official jars" Type="Path" Display="always" Required="true" Mask="false"/>
-  <Config Name="Game Port" Target="25565" Default="25565" Mode="tcp" Description="Minecraft Java TCP" Type="Port" Display="always" Required="true" Mask="false"/>
-  <Config Name="Query Port" Target="25565" Default="25565" Mode="udp" Description="Minecraft Java UDP/query" Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="World Data" Target="/data" Default="/mnt/user/appdata/minecraft-server" Mode="rw" Description="World, config, packs, and cached official BDS zips" Type="Path" Display="always" Required="true" Mask="false"/>
+  <Config Name="Game Port IPv4" Target="19132" Default="19132" Mode="udp" Description="Bedrock UDP (IPv4). Clients: unraid-ip:19132" Type="Port" Display="always" Required="true" Mask="false"/>
+  <Config Name="Game Port IPv6" Target="19133" Default="19133" Mode="udp" Description="Bedrock UDP (IPv6)" Type="Port" Display="always" Required="true" Mask="false"/>
   <Config Name="EULA" Target="EULA" Default="TRUE" Mode="" Description="Must be TRUE. Accepts https://aka.ms/MinecraftEULA" Type="Variable" Display="always" Required="true" Mask="false"/>
-  <Config Name="Version" Target="VERSION" Default="LATEST" Mode="" Description="LATEST = Mojang latest.release (Windows Java launcher). SNAPSHOT = latest snapshot. Or pin e.g. 26.3" Type="Variable" Display="always" Required="true" Mask="false"/>
-  <Config Name="Memory" Target="MEMORY" Default="4G" Mode="" Description="JVM heap (-Xmx / default -Xms)" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="Version" Target="VERSION" Default="LATEST" Mode="" Description="LATEST = current Windows/Store Bedrock. PREVIEW = beta. Or pin e.g. 1.26.51.1" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="PUID" Target="PUID" Default="99" Mode="" Description="Unraid nobody" Type="Variable" Display="advanced" Required="true" Mask="false"/>
   <Config Name="PGID" Target="PGID" Default="100" Mode="" Description="Unraid users" Type="Variable" Display="advanced" Required="true" Mask="false"/>
   <Config Name="Timezone" Target="TZ" Default="America/New_York" Mode="" Description="Container timezone" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="MOTD" Target="MOTD" Default="Vanilla (always latest)" Mode="" Description="server.properties motd" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Server Name" Target="SERVER_NAME" Default="Vanilla Bedrock (always latest)" Mode="" Description="server.properties server-name (LAN list)" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Difficulty" Target="DIFFICULTY" Default="normal" Mode="" Description="peaceful, easy, normal, hard" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Gamemode" Target="GAMEMODE" Default="survival" Mode="" Description="survival, creative, adventure" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Max Players" Target="MAX_PLAYERS" Default="10" Mode="" Description="max-players" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Online Mode" Target="ONLINE_MODE" Default="true" Mode="" Description="true = Microsoft / Java launcher accounts" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Ops" Target="OPS" Default="" Mode="" Description="Comma-separated Java usernames written to ops.txt" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="Whitelist" Target="WHITELIST" Default="" Mode="" Description="Comma-separated usernames; also enables white-list" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Online Mode" Target="ONLINE_MODE" Default="true" Mode="" Description="true = Xbox Live / Microsoft accounts (Windows, consoles, mobile)" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Allow List" Target="ALLOW_LIST_USERS" Default="" Mode="" Description="Comma-separated gamertags written to allowlist.json" Type="Variable" Display="always" Required="false" Mask="false"/>
+  <Config Name="Ops (XUID)" Target="OPS" Default="" Mode="" Description="Comma-separated Xbox XUIDs written as operators in permissions.json" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Level Seed" Target="LEVEL_SEED" Default="" Mode="" Description="Only used for a new world" Type="Variable" Display="always" Required="false" Mask="false"/>
-  <Config Name="View Distance" Target="VIEW_DISTANCE" Default="10" Mode="" Description="view-distance" Type="Variable" Display="advanced" Required="false" Mask="false"/>
-  <Config Name="Backup on Upgrade" Target="BACKUP_ON_UPGRADE" Default="true" Mode="" Description="Copy the world aside when Mojang ships a new release" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="View Distance" Target="VIEW_DISTANCE" Default="" Mode="" Description="view-distance" Type="Variable" Display="advanced" Required="false" Mask="false"/>
+  <Config Name="Backup on Upgrade" Target="BACKUP_ON_UPGRADE" Default="true" Mode="" Description="Copy worlds aside when Mojang ships a new BDS" Type="Variable" Display="advanced" Required="false" Mask="false"/>
   <Config Name="Keep Backups" Target="KEEP_BACKUPS" Default="2" Mode="" Description="Number of upgrade backups to retain" Type="Variable" Display="advanced" Required="false" Mask="false"/>
 </Container>

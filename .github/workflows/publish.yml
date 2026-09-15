@@ -6,10 +6,14 @@ on:
   pull_request:
     branches: [main]
   schedule:
-    # Rebuild the Java 25 runtime weekly. The Minecraft jar is still
-    # fetched from Mojang on every container start, not baked in.
+    # Rebuild the Ubuntu/runtime weekly. The BDS zip is still fetched from
+    # Mojang on every container start, not baked in.
     - cron: "0 6 * * 1"
   workflow_dispatch:
+
+concurrency:
+  group: publish
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -23,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Resolve latest vanilla metadata
+      - name: Resolve latest Bedrock Dedicated Server
         run: bash tests/test_fetch.sh
 
   publish:
@@ -50,7 +54,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Fetch official jar inside image
+      - name: Fetch official BDS zip inside image
         run: |
           mkdir -p "${RUNNER_TEMP}/mcdata"
           docker run --rm \
@@ -63,15 +67,16 @@ jobs:
             mc-test:local
           test -s "${RUNNER_TEMP}/mcdata"/.current-version
           version="$(cat "${RUNNER_TEMP}/mcdata/.current-version")"
-          test -s "${RUNNER_TEMP}/mcdata/versions/${version}/server.jar"
+          test -x "${RUNNER_TEMP}/mcdata/bedrock_server"
+          test -s "${RUNNER_TEMP}/mcdata/versions/${version}/bedrock-server.zip"
           echo "Installed ${version}"
-          cat "${RUNNER_TEMP}/mcdata/.current-version"
 
       - name: Push
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
+          platforms: linux/amd64
           tags: |
             ${{ env.IMAGE }}:latest
             ${{ env.IMAGE }}:${{ github.sha }}

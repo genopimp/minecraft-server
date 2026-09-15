@@ -1,6 +1,6 @@
-# Vanilla Minecraft Java server.
-# On every start the container asks Mojang for latest.release (same channel
-# as the Windows Java launcher) and downloads that official server.jar.
+# Bedrock Dedicated Server.
+# On every start the container asks Mojang for the current Linux BDS zip —
+# the same release as Minecraft for Windows (Microsoft Store / Xbox app).
 #
 # Local:  docker compose up -d
 # Unraid: use unraid/docker-compose.yml or the XML template.
@@ -11,28 +11,28 @@ services:
     build: .
     container_name: minecraft
     restart: unless-stopped
-    stop_grace_period: 60s
+    stop_grace_period: 45s
     stdin_open: true
     tty: true
     ports:
-      - "25565:25565/tcp"
-      - "25565:25565/udp"
+      - "19132:19132/udp"
+      - "19133:19133/udp"
     environment:
       EULA: "TRUE"
       VERSION: LATEST
-      MEMORY: 4G
       PUID: "99"
       PGID: "100"
       TZ: America/New_York
-      MOTD: Vanilla (always latest)
+      SERVER_NAME: Vanilla Bedrock (always latest)
       DIFFICULTY: normal
+      GAMEMODE: survival
       MAX_PLAYERS: "10"
       ONLINE_MODE: "true"
       BACKUP_ON_UPGRADE: "true"
       KEEP_BACKUPS: "2"
     volumes:
       - ${MINECRAFT_DATA:-./data}:/data
-    mem_limit: 6g
+    mem_limit: 4g
     labels:
       net.unraid.docker.managed: composestack
       net.unraid.docker.icon: https://minecraft.wiki/images/Grass_Block_JE7_BE6.png
