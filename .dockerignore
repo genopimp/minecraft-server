@@ -1,0 +1,9 @@
+.git
+.github
+data
+unraid
+tests
+README.md
+LICENSE
+.gitignore
+*.md
