@@ -8,12 +8,15 @@ RUN apt-get update \
         libcurl4 \
         python3 \
         tini \
+        tmux \
         tzdata \
         util-linux \
     && rm -rf /var/lib/apt/lists/*
 
-COPY scripts/fetch-bds.sh scripts/entrypoint.sh /usr/local/bin/
+COPY scripts/fetch-bds.sh scripts/entrypoint.sh scripts/mc-console scripts/mc-cmd scripts/bashrc-console.sh /usr/local/bin/
 RUN chmod 0755 /usr/local/bin/fetch-bds.sh /usr/local/bin/entrypoint.sh \
+        /usr/local/bin/mc-console /usr/local/bin/mc-cmd \
+    && cat /usr/local/bin/bashrc-console.sh >> /etc/bash.bashrc \
     && mkdir -p /data
 
 ENV EULA=FALSE \

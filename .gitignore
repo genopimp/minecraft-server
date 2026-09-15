@@ -5,6 +5,8 @@
 .current-version
 .bedrock.pid
 .console
+.tmux.sock
+.tmux-tmp/
 server.properties
 allowlist.json
 permissions.json

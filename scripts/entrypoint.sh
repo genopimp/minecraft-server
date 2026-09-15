@@ -114,31 +114,35 @@ PY
 }
 
 MC_PID=""
+TMUX_SOCK="${DATA_DIR}/.tmux.sock"
+TMUX_SESSION="bedrock"
 
 stop_server() {
   echo "Caught signal; stopping Bedrock Dedicated Server..."
-  if [[ -n "${MC_PID}" ]] && kill -0 "$MC_PID" 2>/dev/null; then
-    echo stop >&3 || true
-    local i
-    for i in $(seq 1 40); do
-      kill -0 "$MC_PID" 2>/dev/null || break
-      sleep 1
-    done
-    if kill -0 "$MC_PID" 2>/dev/null; then
-      echo "Server still running; sending SIGTERM"
-      kill -TERM "$MC_PID" 2>/dev/null || true
-      sleep 5
-    fi
-    if kill -0 "$MC_PID" 2>/dev/null; then
-      kill -KILL "$MC_PID" 2>/dev/null || true
-    fi
-    wait "$MC_PID" 2>/dev/null || true
+  if tmux -S "$TMUX_SOCK" has-session -t "$TMUX_SESSION" 2>/dev/null; then
+    tmux -S "$TMUX_SOCK" send-keys -t "$TMUX_SESSION" "stop" Enter || true
   fi
-  exec 3>&- 2>/dev/null || true
+  local i
+  for i in $(seq 1 40); do
+    if [[ -n "${MC_PID}" ]] && kill -0 "$MC_PID" 2>/dev/null; then
+      sleep 1
+      continue
+    fi
+    break
+  done
+  if [[ -n "${MC_PID}" ]] && kill -0 "$MC_PID" 2>/dev/null; then
+    echo "Server still running; sending SIGTERM"
+    kill -TERM "$MC_PID" 2>/dev/null || true
+    sleep 5
+  fi
+  if [[ -n "${MC_PID}" ]] && kill -0 "$MC_PID" 2>/dev/null; then
+    kill -KILL "$MC_PID" 2>/dev/null || true
+  fi
+  tmux -S "$TMUX_SOCK" kill-session -t "$TMUX_SESSION" 2>/dev/null || true
 }
 
 start_server() {
-  local bin console version
+  local bin version
   version="$(cat "${DATA_DIR}/.current-version")"
   bin="${DATA_DIR}/bedrock_server"
   if [[ ! -x "$bin" ]]; then
@@ -146,26 +150,35 @@ start_server() {
     exit 1
   fi
 
-  console="${DATA_DIR}/.console"
-  rm -f "$console"
-  mkfifo "$console"
-
   echo "Starting Bedrock Dedicated Server ${version}"
+  echo "Admin console: docker exec -it <container> mc-console"
+  echo "One-shot cmd:  docker exec <container> mc-cmd say hello"
+
   cd "$DATA_DIR"
+  export HOME="${DATA_DIR}"
+  export TMUX_TMPDIR="${DATA_DIR}"
   export LD_LIBRARY_PATH="${DATA_DIR}"
-  "$bin" <>"$console" &
-  MC_PID=$!
+  rm -f "$TMUX_SOCK"
+
+  tmux -S "$TMUX_SOCK" new-session -d -s "$TMUX_SESSION" -n server -- "$bin"
+  chmod 777 "$TMUX_SOCK" 2>/dev/null || true
+  # Allow Unraid's root Console to attach to the PUID-owned session.
+  tmux -S "$TMUX_SOCK" server-access -a root 2>/dev/null || true
+
+  MC_PID="$(tmux -S "$TMUX_SOCK" list-panes -t "$TMUX_SESSION" -F '#{pane_pid}' | head -1)"
+  if [[ -z "$MC_PID" ]]; then
+    echo "ERROR: tmux started but bedrock_server pid was not found" >&2
+    exit 1
+  fi
   echo "$MC_PID" > "${DATA_DIR}/.bedrock.pid"
-  exec 3>"$console"
+  echo "bedrock_server pid ${MC_PID}  (tmux session ${TMUX_SESSION})"
+
   trap stop_server SIGTERM SIGINT
-  set +e
-  wait "$MC_PID"
-  local rc=$?
-  set -e
-  exec 3>&- 2>/dev/null || true
-  rm -f "$console" "${DATA_DIR}/.bedrock.pid"
-  echo "Bedrock Dedicated Server exited (${rc})"
-  return "$rc"
+  while kill -0 "$MC_PID" 2>/dev/null && tmux -S "$TMUX_SOCK" has-session -t "$TMUX_SESSION" 2>/dev/null; do
+    sleep 1
+  done
+  rm -f "${DATA_DIR}/.bedrock.pid" "$TMUX_SOCK"
+  echo "Bedrock Dedicated Server exited"
 }
 
 reexec_as_player "$@"

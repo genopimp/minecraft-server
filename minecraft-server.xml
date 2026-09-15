@@ -9,8 +9,8 @@
   <Privileged>false</Privileged>
   <Support>https://github.com/genopimp/minecraft-server</Support>
   <Project>https://www.minecraft.net/en-us/download/server/bedrock</Project>
-  <Overview>Vanilla Minecraft Bedrock Dedicated Server. On every start it downloads Mojang's current Linux BDS zip (same release as Minecraft for Windows). Configure the world, allow list, difficulty, and ports from this Unraid form. UDP 19132 only — not Java Edition.</Overview>
-  <Description>Bedrock Dedicated Server aligned with Minecraft for Windows. Copy a world into appdata/minecraft-server/worlds/&lt;Level Name&gt;/ and allowlist.json next to it. Leave Allow List Users empty if you copied a file. Clients use UDP 19132.</Description>
+  <Overview>Vanilla Minecraft Bedrock Dedicated Server. On every start it downloads Mojang's current Linux BDS zip (same release as Minecraft for Windows). Configure the world, allow list, difficulty, and ports from this Unraid form. Live admin console: Docker Console → mc-console. UDP 19132 only — not Java Edition.</Overview>
+  <Description>Bedrock Dedicated Server aligned with Minecraft for Windows. Copy a world into appdata/minecraft-server/worlds/&lt;Level Name&gt;/ and allowlist.json next to it. Leave Allow List Users empty if you copied a file. Clients use UDP 19132. Admin console: Docker → Console → mc-console (detach with Ctrl-b then d).</Description>
   <Category>GameServers:</Category>
   <WebUI/>
   <TemplateURL>https://raw.githubusercontent.com/genopimp/minecraft-server/main/minecraft-server.xml</TemplateURL>

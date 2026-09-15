@@ -90,6 +90,33 @@ docker restart minecraft
 
 Optional daily restart (User Scripts, ~05:00): `unraid/daily-restart.sh`.
 
+### Admin console (in-container)
+
+The dedicated-server process has a full operator console on stdin (cheats for in-game players are separate). The image runs BDS inside tmux so you can attach without stopping the world.
+
+**Unraid:** Docker tab → `minecraft-server` → **Console**, then:
+
+```bash
+mc-console
+```
+
+You see live logs and can type commands (`help`, `list`, `say hello`, `op <gamertag>`, `time set day`, `gamerule ...`). Detach with **Ctrl-b** then **d**. Do not Ctrl-C; that can stop the server.
+
+One-shot from Unraid Console or SSH:
+
+```bash
+mc-cmd say hello
+mc-cmd list
+mc-cmd op SomeGamertag
+```
+
+From another host:
+
+```bash
+docker exec -it minecraft-server mc-console
+docker exec minecraft-server mc-cmd say hello
+```
+
 ## Local
 
 ```bash

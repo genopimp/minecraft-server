@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# Send one Bedrock console command without attaching.
+# Usage: mc-cmd say hello
+#        mc-cmd op Steve
+set -euo pipefail
+
+DATA_DIR="${DATA_DIR:-/data}"
+SOCK="${DATA_DIR}/.tmux.sock"
+SESSION="bedrock"
+
+if [[ $# -lt 1 ]]; then
+  echo "Usage: mc-cmd <bedrock command...>" >&2
+  echo "Example: mc-cmd say hello" >&2
+  echo "         mc-cmd list" >&2
+  echo "Live console: mc-console" >&2
+  exit 2
+fi
+
+if [[ ! -S "$SOCK" ]] || ! tmux -S "$SOCK" has-session -t "$SESSION" 2>/dev/null; then
+  echo "Bedrock console is not running yet." >&2
+  exit 1
+fi
+
+tmux -S "$SOCK" send-keys -t "$SESSION" "$*" Enter
+echo "sent: $*"

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Attach to the live Bedrock Dedicated Server console (input + output).
+# Detach without stopping the server: Ctrl-b, then d.
+set -euo pipefail
+
+DATA_DIR="${DATA_DIR:-/data}"
+SOCK="${DATA_DIR}/.tmux.sock"
+SESSION="bedrock"
+
+if [[ ! -S "$SOCK" ]] || ! tmux -S "$SOCK" has-session -t "$SESSION" 2>/dev/null; then
+  echo "Bedrock console is not running yet (server still starting, or the container is down)." >&2
+  exit 1
+fi
+
+if [[ ! -t 0 || ! -t 1 ]]; then
+  echo "Need an interactive terminal. From Unraid: Docker → minecraft-server → Console, then: mc-console" >&2
+  echo "One-shot: mc-cmd say hello" >&2
+  exit 1
+fi
+
+echo "Attached to Bedrock console. Detach with Ctrl-b then d  (does not stop the server)."
+echo "Do not Ctrl-C — that can stop the world.  Type help for commands."
+exec tmux -S "$SOCK" attach-session -t "$SESSION"

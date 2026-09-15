@@ -21,3 +21,9 @@ new env/paths; world data stays on the appdata path.
 
 If you already created this container with Compose Manager, remove that stack
 first so you do not run two servers on the same `appdata` folder.
+
+## Admin console
+
+Docker → container → **Console**, then type `mc-console` for the live
+Bedrock operator console (logs + commands). Detach with Ctrl-b then d.
+One-shot: `mc-cmd say hello`.
