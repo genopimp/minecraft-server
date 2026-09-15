@@ -35,7 +35,7 @@ services:
     mem_limit: 4g
     labels:
       net.unraid.docker.managed: composestack
-      net.unraid.docker.icon: https://minecraft.wiki/images/Grass_Block_JE7_BE6.png
+      net.unraid.docker.icon: https://raw.githubusercontent.com/genopimp/minecraft-server/main/unraid/icon.png
     logging:
       driver: json-file
       options:
