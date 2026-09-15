@@ -22,36 +22,63 @@ The server cannot hot-swap versions. After Minecraft for Windows updates, **rest
 
 ## Unraid
 
-Accept the [Minecraft EULA](https://aka.ms/MinecraftEULA) (`EULA=TRUE`).
+Accept the [Minecraft EULA](https://aka.ms/MinecraftEULA) (`EULA=TRUE` in the template).
 
-### Compose Manager
+Configure everything from the **Docker** tab form (world name, allow list, difficulty, ports). Do not use Compose Manager and this template at the same time for the same appdata folder.
 
-1. Put `unraid/docker-compose.yml` at `/mnt/user/appdata/minecraft-server/docker-compose.yml`.
-2. Compose up. First start downloads the current official zip (~100 MB).
-3. Forward **UDP 19132** (and 19133 if you use IPv6) on the router to the Unraid host.
-4. In Minecraft for Windows: Play → Servers → Add server → `unraid-ip` port `19132`.
+### Add the template to the Unraid UI
+
+**Option A — user template (fastest)**
+
+On the Unraid box:
 
 ```bash
-# on Unraid
+wget -O /boot/config/plugins/dockerMan/templates-user/my-minecraft-server.xml \
+  https://raw.githubusercontent.com/genopimp/minecraft-server/main/minecraft-server.xml
+```
+
+Then: **Docker → Add Container → Template dropdown → `minecraft-server`**.
+
+**Option B — template repository**
+
+1. **Settings → Docker** → enable **Template authoring mode** if it is off.
+2. **Docker → Add Container** → at the bottom, **Template Repositories**.
+3. Add:
+
+   `https://github.com/genopimp/minecraft-server`
+
+4. Apply, then **Add Container** and pick `minecraft-server`.
+
+Fill the form (defaults are fine for a first run):
+
+| Field | Typical value |
+|---|---|
+| World Data | `/mnt/user/appdata/minecraft-server` |
+| Game Port IPv4 | `19132` UDP |
+| EULA | `TRUE` |
+| Version | `LATEST` |
+| Level Name | `Bedrock level` (must match the world folder you copy) |
+| Enable Allow List | `true` |
+| Allow List Users | **leave empty** if you copied `allowlist.json` |
+
+Apply. First start downloads the current official BDS zip (~90 MB).
+
+If GHCR is private: GitHub → Packages → `minecraft-server` → Package settings → Public. Unraid then needs a GitHub token under Docker Hub logins, or make the package public.
+
+Forward **UDP 19132** on the router. In Minecraft for Windows: Play → Servers → Add server → `unraid-ip` port `19132`.
+
+### Compose Manager (optional)
+
+Only if you prefer compose instead of the Docker tab template:
+
+```bash
 mkdir -p /mnt/user/appdata/minecraft-server
+# copy unraid/docker-compose.yml into that directory
 cd /mnt/user/appdata/minecraft-server
-# copy unraid/docker-compose.yml here, then:
 docker compose pull
 docker compose up -d
 docker compose logs -f
 ```
-
-### Docker tab (XML template)
-
-Add container from `unraid/minecraft-server.xml`, or repository:
-
-```
-ghcr.io/genopimp/minecraft-server:latest
-```
-
-Map `/mnt/user/appdata/minecraft-server` → `/data`. Host port **19132 UDP**.
-
-If GHCR shows the package as private after the first Actions run: GitHub → Packages → `minecraft-server` → Package settings → Public.
 
 ### Stay current
 
