@@ -28,6 +28,7 @@ services:
       GAMEMODE: survival
       MAX_PLAYERS: "10"
       ONLINE_MODE: "true"
+      TRANSPORT: raknet
       BACKUP_ON_UPGRADE: "true"
       KEEP_BACKUPS: "2"
     volumes:

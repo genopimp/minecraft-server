@@ -27,7 +27,8 @@ ENV EULA=FALSE \
     DATA_DIR=/data \
     BACKUP_ON_UPGRADE=true \
     KEEP_BACKUPS=2 \
-    LEVEL_NAME="Bedrock level"
+    LEVEL_NAME="Bedrock level" \
+    TRANSPORT=raknet
 
 WORKDIR /data
 VOLUME ["/data"]

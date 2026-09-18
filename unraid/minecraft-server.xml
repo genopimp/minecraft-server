@@ -27,6 +27,7 @@
   <Config Name="Game Port IPv6" Target="19133" Default="19133" Mode="udp" Description="Bedrock IPv6 game port (UDP)" Type="Port" Display="always" Required="true" Mask="false"/>
   <Config Name="EULA" Target="EULA" Default="TRUE" Mode="" Description="Must be TRUE. You accept https://aka.ms/MinecraftEULA" Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="Version" Target="VERSION" Default="LATEST" Mode="" Description="LATEST = current Minecraft for Windows. PREVIEW = beta app. Or pin a BDS id such as 1.26.51.1" Type="Variable" Display="always" Required="true" Mask="false"/>
+  <Config Name="Transport" Target="TRANSPORT" Default="raknet" Mode="" Description="raknet = classic UDP 19132 (same as a working old BDS). nethernet = new WebRTC transport; needs TCP 19132 plus extra UDP ports." Type="Variable" Display="always" Required="true" Mask="false"/>
   <Config Name="Timezone" Target="TZ" Default="America/New_York" Mode="" Description="Container timezone" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Server Name" Target="SERVER_NAME" Default="Vanilla Bedrock (always latest)" Mode="" Description="Name shown in the friends / LAN list" Type="Variable" Display="always" Required="false" Mask="false"/>
   <Config Name="Level Name" Target="LEVEL_NAME" Default="Bedrock level" Mode="" Description="World folder name under worlds/. Must match the folder you copied (default: Bedrock level)" Type="Variable" Display="always" Required="true" Mask="false"/>

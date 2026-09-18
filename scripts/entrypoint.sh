@@ -71,6 +71,15 @@ apply_properties() {
   set_from_env SERVER_PORTV6 server-portv6
   set_from_env WHITE_LIST white-list
   set_from_env ALLOW_LIST allow-list
+  # 1.26.51+ BDS zip defaults to NetherNet (TCP signaling + extra UDP).
+  # Home Unraid setups forward UDP 19132 like classic RakNet — pin that unless overridden.
+  set_prop transport "${TRANSPORT:-raknet}"
+  set_from_env SERVER_UDP_PORTS server-udp-ports
+  # Some 1.26.51 zips shipped a misspelled key that still selected NetherNet.
+  if grep -q '^transportation=' "${DATA_DIR}/server.properties" 2>/dev/null; then
+    sed -i '/^transportation=/d' "${DATA_DIR}/server.properties"
+  fi
+  echo "transport=$(grep '^transport=' "${DATA_DIR}/server.properties" | tail -1)"
 }
 
 write_allowlist() {

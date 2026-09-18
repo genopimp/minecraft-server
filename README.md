@@ -144,6 +144,7 @@ Data directory: `./data` (override with `MINECRAFT_DATA=`).
 | `OPS` | | Comma-separated Xbox XUIDs → `permissions.json` operators |
 | `VIEW_DISTANCE` / `TICK_DISTANCE` | | |
 | `ALLOW_CHEATS` | | |
+| `TRANSPORT` | `raknet` | `raknet` = UDP 19132 (old working BDS). `nethernet` needs TCP 19132 + extra UDP |
 | `BACKUP_ON_UPGRADE` | `true` | Copy `worlds/` when the BDS version changes |
 | `KEEP_BACKUPS` | `2` | Upgrade backups to keep |
 | `FETCH_ONLY` | `false` | Download/install BDS and exit (CI) |
